@@ -1,2 +1,2 @@
 iot/rpi/.env
-
+iot/rpi/wifi/wpa_supplicant.conf
