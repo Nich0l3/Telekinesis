@@ -1,15 +1,23 @@
-#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <ESPmDNS.h>
+#include "cred.h"
 
-#define WIFI_SSID       "Pixel"
-#define WIFI_PASSWORD   ""  
-#define LOW             1
-#define HIGH            0
-#define DEVID		"esp1"
+#define ESP32
+
+#ifdef ESP32
+  #include <WiFi.h>
+#endif
+#ifdef ESP8266
+  #include <ESP8266WiFi.h>
+  #define LOW             1
+  #define HIGH            0
+#endif
+
+#define DEVID		        "esp1"
 
 // WiFi settings
-const char *ssid      = WIFI_SSID;        // Replace with your WiFi name
-const char *password  = WIFI_PASSWORD;    // Replace with your WiFi password
+const char *ssid      = WIFI_SSID;        
+const char *password  = WIFI_PASSWORD;    
 
 // MQTT Broker settings
 const char* mqtt_server = "eeg.local";
@@ -48,8 +56,8 @@ void connectToMQTTBroker() {
 
 void set_state(uint8_t state){
   digitalWrite(LED_BUILTIN,state);
-  digitalWrite(D6,state);
-  digitalWrite(D7,state);
+//  digitalWrite(D6,state);
+//  digitalWrite(D7,state);
 }
 
 String messageTemp = "";
@@ -95,13 +103,13 @@ void setup() {
     Serial.begin(115200);
     
     pinMode(LED_BUILTIN,OUTPUT);
-    pinMode(D6,OUTPUT);
-    pinMode(D7,OUTPUT);
+ //   pinMode(D6,OUTPUT);
+ //   pinMode(D7,OUTPUT);
     set_state(LOW);
     
     connectToWiFi();
     
-    startnDNS();
+    startmDNS();
 
     mqtt_client.setServer(mqtt_server, mqtt_port);
     mqtt_client.setCallback(mqttCallback);
