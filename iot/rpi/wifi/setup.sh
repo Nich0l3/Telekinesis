@@ -19,7 +19,7 @@ update_config=1
 network={
     ssid="$SSID"
     psk="$PASSWORD"
-    key_mgmt=WPA-PSK
+    key_mgmt=WPA2-PSK
 }
 EOL
 
