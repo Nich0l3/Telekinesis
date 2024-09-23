@@ -1,21 +1,27 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-#define WIFI_SSID       "Modify"
-#define WIFI_PASSWORD   "isuq5478"  
+#define WIFI_SSID       "Pixel"
+#define WIFI_PASSWORD   ""  
+#define LOW             1
+#define HIGH            0
+>>>>>>> 389bef7 (eeg light)
 
 // WiFi settings
 const char *ssid      = WIFI_SSID;        // Replace with your WiFi name
 const char *password  = WIFI_PASSWORD;    // Replace with your WiFi password
 
 // MQTT Broker settings
-const char* mqtt_server = "192.168.177.86";
+=======
+const char* mqtt_server = "192.168.102.170";
+>>>>>>> 389bef7 (eeg light)
 const int mqtt_port = 1883;
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
 
 // MQTT misc
-const char* mqtt_topic = "eeg-1/broadcast";
+const char* mqtt_topic = "eeg-1/light";
+>>>>>>> 389bef7 (eeg light)
 
 void connectToWiFi() {
   WiFi.begin(ssid, password);
@@ -43,8 +49,9 @@ void connectToMQTTBroker() {
     }
 }
 
-void set_state(int state){
-  digitalWrite(D4,state);
+void set_state(uint8_t state){
+  digitalWrite(LED_BUILTIN,state);
+>>>>>>> 389bef7 (eeg light)
   digitalWrite(D6,state);
   digitalWrite(D7,state);
 }
@@ -55,21 +62,25 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
     Serial.print("Message received on topic: ");
     Serial.println(topic);
     Serial.print("Message:");
-    String messageTemp;
+    char messageTemp;
 
     for (unsigned int i = 0; i < length; i++) {
-        Serial.print((char) payload[i]);
         messageTemp += (char)payload[i];
+        Serial.print(messageTemp);
+        Serial.println();
     }
     
-    if (String(topic) == mqtt_topic) {
-      if(messageTemp == "0"){
-        set_state(0);
-      } else if (messageTemp == "1"){
-        set_state(1);
+    if ((String)topic == mqtt_topic){
+      if(messageTemp == '0'){
+          Serial.println("switched to LOW");
+          set_state(LOW);
+
+      } else if (messageTemp == '1'){
+          Serial.println("switched to HIGH");    
+          set_state(HIGH);
       }
     }
-
+>>>>>>> 389bef7 (eeg light)
     Serial.println();
     Serial.println("-----------------------");
 }
@@ -77,10 +88,11 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
 void setup() {
     Serial.begin(115200);
     
-    pinMode(D5,OUTPUT);
+    pinMode(LED_BUILTIN,OUTPUT);
     pinMode(D6,OUTPUT);
     pinMode(D7,OUTPUT);
-    set_state(LOW);
+  //  set_state(LOW);
+>>>>>>> 389bef7 (eeg light)
     
     connectToWiFi();
     
