@@ -1,4 +1,4 @@
 iot/rpi/.env
 iot/rpi/wifi/wpa_supplicant.conf
 *.zip
-iot/telekinesis/iot/eeg-light/cred.h
+iot/eeg-light/cred.h
