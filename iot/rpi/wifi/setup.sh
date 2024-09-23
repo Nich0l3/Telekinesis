@@ -13,24 +13,26 @@ create_wpa_supplicant_conf() {
 
     # Create the wpa_supplicant.conf file
     cat <<EOL > $CONFIG_FILE
+country=in
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
 
 network={
-    ssid="$SSID"
-    psk="$PASSWORD"
-    key_mgmt=WPA2-PSK
+   scan_ssid=1
+   ssid="$SSID"
+   key_mgmt=NONE
 }
 EOL
 
-    echo "wpa_supplicant.conf created at $CONFIG_FILE"
+   echo "wpa_supplicant.conf created at $CONFIG_FILE"
 }
 
 # Check for root user
-if [ "$EUID" -ne 0 ];then
-	echo "Please run as a root user"
-	exit 1
-fi
+#if [ "$EUID" -ne 0 ];then
+#	echo "Please run as a root user"
+#	exit 1
+#fi
+
+###################################     MAIN    #########################################
 
 # Display networks
 display_networks
