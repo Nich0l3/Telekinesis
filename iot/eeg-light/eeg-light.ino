@@ -5,6 +5,7 @@
 #define WIFI_PASSWORD   ""  
 #define LOW             1
 #define HIGH            0
+#define DEVID		"esp1"
 
 // WiFi settings
 const char *ssid      = WIFI_SSID;        // Replace with your WiFi name
@@ -79,16 +80,29 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
     Serial.println("-----------------------");
 }
 
+void startmDNS(){
+  // Start the mDNS responder for testing connections
+  if (!MDNS.begin(DEVID)) { // Set up the mDNS responder for esp1.local
+    Serial.println("Error setting up MDNS responder!");
+    while (1) {
+      delay(1000);
+    }
+  }
+  Serial.println("mDNS responder started");
+}
+
 void setup() {
     Serial.begin(115200);
     
     pinMode(LED_BUILTIN,OUTPUT);
     pinMode(D6,OUTPUT);
     pinMode(D7,OUTPUT);
-  //  set_state(LOW);
+    set_state(LOW);
     
     connectToWiFi();
     
+    startnDNS();
+
     mqtt_client.setServer(mqtt_server, mqtt_port);
     mqtt_client.setCallback(mqttCallback);
     
