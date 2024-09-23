@@ -1,2 +1,1 @@
-mosquitto
-mosquitto-clients
+mosquitto mosquitto-clients avahi-daemon avahi-utils libnss-mdns
