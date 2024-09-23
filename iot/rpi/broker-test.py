@@ -1,11 +1,33 @@
-import sys
-from paho.mqtt import client as mqtt_client
+import paho.mqtt.client as mqtt_client
+
+def on_message(client, userdata, message):
+    print(f"\nReceived message: {message.payload.decode()} on topic: {message.topic}")
 
 client = mqtt_client.Client()
 
-if client.connect("localhost",1883,60) != 0 :
-    print('Couldn\'t connect to mqtt broker')
-    sys.exit(1)
+client.on_message = on_message
 
-client.publish("testTopic","Hi, paho mqtt client works fine", 0)
-client.disconnect()
+broker_address = "eeg.local"
+client.connect(broker_address, port=1883)
+
+topic = "testTopic"
+client.subscribe(topic)
+
+client.loop_start()
+
+try:
+    print("Subscriber is running. You can publish messages to the same topic.")
+    
+    # Publish messages in a loop
+    while True:
+        message = input("Enter a message to publish (or 'exit' to quit): ")
+        if message.lower() == 'exit':
+            break
+        client.publish(topic, message)
+except KeyboardInterrupt:
+    print("Exiting...")
+finally:
+    # Stop the loop and disconnect from the broker
+    client.loop_stop()
+    client.disconnect()
+

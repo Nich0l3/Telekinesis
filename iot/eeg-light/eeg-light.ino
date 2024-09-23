@@ -11,7 +11,7 @@ const char *ssid      = WIFI_SSID;        // Replace with your WiFi name
 const char *password  = WIFI_PASSWORD;    // Replace with your WiFi password
 
 // MQTT Broker settings
-const char* mqtt_server = "192.168.102.170";
+const char* mqtt_server = "eeg.local";
 const int mqtt_port = 1883;
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
