@@ -5,23 +5,19 @@
 #define WIFI_PASSWORD   ""  
 #define LOW             1
 #define HIGH            0
->>>>>>> 389bef7 (eeg light)
 
 // WiFi settings
 const char *ssid      = WIFI_SSID;        // Replace with your WiFi name
 const char *password  = WIFI_PASSWORD;    // Replace with your WiFi password
 
 // MQTT Broker settings
-=======
 const char* mqtt_server = "192.168.102.170";
->>>>>>> 389bef7 (eeg light)
 const int mqtt_port = 1883;
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
 
 // MQTT misc
 const char* mqtt_topic = "eeg-1/light";
->>>>>>> 389bef7 (eeg light)
 
 void connectToWiFi() {
   WiFi.begin(ssid, password);
@@ -51,7 +47,6 @@ void connectToMQTTBroker() {
 
 void set_state(uint8_t state){
   digitalWrite(LED_BUILTIN,state);
->>>>>>> 389bef7 (eeg light)
   digitalWrite(D6,state);
   digitalWrite(D7,state);
 }
@@ -80,7 +75,6 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
           set_state(HIGH);
       }
     }
->>>>>>> 389bef7 (eeg light)
     Serial.println();
     Serial.println("-----------------------");
 }
@@ -92,7 +86,6 @@ void setup() {
     pinMode(D6,OUTPUT);
     pinMode(D7,OUTPUT);
   //  set_state(LOW);
->>>>>>> 389bef7 (eeg light)
     
     connectToWiFi();
     
