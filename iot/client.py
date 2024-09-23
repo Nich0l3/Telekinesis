@@ -16,7 +16,6 @@ def home_automation(msg):
             qos=0,
     )
     pubMsg.wait_for_publish()
-    print( "Published" if (pubMsg.is_published()) else "Not Published")
 
 client = mqtt.Client("rpi_client2") #this name should be unique
 client.on_publish = on_publish
