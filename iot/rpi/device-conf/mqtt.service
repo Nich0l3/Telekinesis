@@ -1,0 +1,9 @@
+<service-group>
+  <name replace-wildcards="yes">%h MQTT Broker</name>
+  <service>
+    <type>_mqtt._tcp</type>
+    <port>1883</port>
+    <txt-record>info=MQTT Broker</txt-record>
+  </service>
+</service-group>
+

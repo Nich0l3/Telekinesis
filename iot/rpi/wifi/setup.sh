@@ -108,7 +108,8 @@ enable_ssh(){
 ###################################     MAIN    #########################################
 
 initial_prompt 
-install_os
+
+#install_os
 
 echo network setup begin ...
 display_networks 
@@ -121,4 +122,3 @@ create_user_conf
 echo user config complete ...
 
 enable_ssh 
-
