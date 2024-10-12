@@ -1,5 +1,4 @@
 */.env
->>>>>>> bf9686f (ignore)
 iot/rpi/wifi/wpa_supplicant.conf
 *.zip
 iot/eeg-light/cred.h
