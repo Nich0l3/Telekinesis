@@ -89,8 +89,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
 }
 
 void startmDNS(){
-  // Start the mDNS responder for testing connections
-  if (!MDNS.begin(DEVID)) { // Set up the mDNS responder for esp1.local
+  if (!MDNS.begin(DEVID)) { 
     Serial.println("Error setting up MDNS responder!");
     while (1) {
       delay(1000);
