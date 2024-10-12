@@ -1,46 +1,124 @@
 #!/bin/bash
 
-display_networks(){
-	nmcli d w rescan
-	nmcli d w list
+#####    ONLY CHANGE THESE VARIABLES (unless you know what you are doing) ######
+DEVICE="/dev/sda"
+MOUNT="/media/ubie"
+BOOTFS="$MOUNT/bootfs"
+CONFIG_FILE="$BOOTFS/wpa_supplicant.conf"
+ENABLE_SSH=1 
+OS_FILE="$HOME/Downloads/iso/2024-07-04-raspios-bookworm-arm64.img.xz"
+NW_SETUP=1
+################################################################################
+
+
+initial_prompt(){
+  echo before continuing check whether you have initialized these variables
+  echo 1. MOUNT POINT : $MOUNT
+  echo 2. ENABLE_SSH  : $ENABLE_SSH
+  echo 3. OS_FILE     : $OS_FILE
+  echo 4. DEVICE      : $DEVICE
+  echo
+  read -p "type exit to reoconfig and enter to continue : " CHOICE
+
+  if [ "${CHOICE,,}" = "exit" ]; # this will convert CHOICE value to lowercase
+  then 
+    exit
+  fi
 }
 
-# Function to create wpa_supplicant.conf
+install_os(){
+
+  read -p "want to install a fresh image ? (y/N):" CHOICE
+
+  if [ "${CHOICE,,}" = "y" ]; then
+      if ! sudo dd if="$OS_FILE" of="$DEVICE" status=progress bs=4M; then
+          echo "Error: Installation failed."
+          return 1
+      fi
+      sync
+      echo "Installation complete."
+  else
+      echo "Installation canceled."
+  fi
+
+}
+
+display_networks(){
+  echo $NW_SETUP
+  read -p "want to config n/w (y/N) : " CHOICE
+
+  if [ "${CHOICE,,}" = "y" ];then
+    NW_SETUP=1
+  	nmcli d w rescan
+	  nmcli d w list
+  else
+    NW_SETUP=0
+  fi
+  echo $NW_SETUP
+}
+
 create_wpa_supplicant_conf() {
-    SSID=$1
-    PASSWORD=$2
-    CONFIG_FILE="./wpa_supplicant.conf"
+  
+  echo $NW_SETUP
+  if [ "$NW_SETUP" -ne 0 ]; then
+   
+    read -p "enter SSID : "      SSID
+    read -sp "enter password : " PASSWORD
+    echo
+
+    if [ -z "$PASSWORD" ]; then
+      echo "Password cannot be empty."
+      return 1
+    fi
+
+    CONFIG=$(wpa_passphrase "$SSID" "$PASSWORD")
 
     # Create the wpa_supplicant.conf file
     cat <<EOL > $CONFIG_FILE
 country=in
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
 
-network={
-   scan_ssid=1
-   ssid="$SSID"
-   key_mgmt=NONE
-}
+$CONFIG
 EOL
 
-   echo "wpa_supplicant.conf created at $CONFIG_FILE"
+    sed -i '/#psk/d' $CONFIG_FILE
+    echo "wpa_supplicant.conf created at $CONFIG_FILE"
+
+  fi
 }
 
-# Check for root user
-#if [ "$EUID" -ne 0 ];then
-#	echo "Please run as a root user"
-#	exit 1
-#fi
+create_user_conf() {
+  
+  read -p "change user config? (necessary for initial setup don't know about other times) (y/N) : " CHOICE
+
+  if [ "${CHOICE,,}" = "y" ];then
+    read -p "enter username : "   USR
+    read -sp "enter password : "  PASSWORD
+    echo "$USR:$(echo $PASSWORD | openssl passwd -6 -stdin)" > $BOOTFS/userconf.txt
+  fi
+}
+
+enable_ssh(){
+  if $ENABLE_SSH; then
+    touch $BOOTFS/ssh
+  fi
+}
 
 ###################################     MAIN    #########################################
 
-# Display networks
-display_networks
+initial_prompt 
+install_os
 
-# Prompt for user input
-read -p "Enter the SSID of the Wi-Fi: " SSID
-read -sp "Enter the Password of the Wi-Fi: " PASSWORD
+echo network setup begin ...
+display_networks 
+create_wpa_supplicant_conf 
+echo network setup complete ...
 echo
 
-# Call the function to create the config file
-create_wpa_supplicant_conf "$SSID" "$PASSWORD"
+echo user setup begin ...
+create_user_conf
+echo user config complete ...
+
+enable_ssh 
+
