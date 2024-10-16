@@ -1,3 +1,3 @@
-#define WIFI_SSID       "WIFI-SSID"
-#define WIFI_PASSWORD   "WIFI-PASSWORD"  
+#define WIFI_SSID       "Pixel"
+#define WIFI_PASSWORD   ""  
 

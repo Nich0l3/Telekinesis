@@ -4,7 +4,7 @@
 DEVICE="/dev/sda"
 MOUNT="/media/ubie"
 BOOTFS="$MOUNT/bootfs"
-CONFIG_FILE="$BOOTFS/wpa_supplicant.conf"
+CONFIG_FILE="$PWD/wpa_supplicant.conf" #"$BOOTFS/wpa_supplicant.conf"
 ENABLE_SSH=1 
 OS_FILE="$HOME/Downloads/iso/2024-07-04-raspios-bookworm-arm64.img.xz"
 NW_SETUP=1
