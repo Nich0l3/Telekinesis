@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutFlicker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@color/black">
+
+    <!-- Large Button 1 -->
+    <Button
+        android:id="@+id/largeButton1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:padding="16dp"
+        android:text="10 Hz"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="20sp" />
+
+    <!-- Inner LinearLayout for TextView and ToggleButton -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/deviceNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="DeviceName"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            />
+
+        <ToggleButton
+            android:id="@+id/stateToggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/toggle_button_background"
+            android:padding="16dp"
+            android:textOff="OFF"
+            android:textOn="ON"
+            android:textSize="24sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="2"
+            />
+    </LinearLayout>
+
+    <!-- Large Button 2 -->
+    <Button
+        android:id="@+id/largeButton2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:padding="16dp"
+        android:text="15 Hz"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="20sp" />
+
+</LinearLayout>

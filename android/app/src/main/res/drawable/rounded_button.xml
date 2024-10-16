@@ -1,0 +1,8 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" /> <!-- Rounded corners -->
+    <solid android:color="@color/buttonColor" /> <!-- Reference to the orange color -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/buttonBorderColor" /> <!-- Border color -->
+</shape>
