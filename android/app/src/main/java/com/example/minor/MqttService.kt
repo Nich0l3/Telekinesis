@@ -10,12 +10,12 @@ import org.eclipse.paho.client.mqttv3.*
 
 class MqttService : Service() {
     private lateinit var mqttAndroidClient: MqttAndroidClient
-    private val serverUri = "tcp://192.168.146.179:1883"
+    private val serverUri = "tcp://192.168.1.36:1883"
     private val clientId = "AndroidClient"
-//    private val subscriptionTopic = listOf("daq", "esp/devices")
-    //                                     helmet 012, JSON
 
-    private val subscriptionTopic = "esp/devices"
+    // List of topics to subscribe to
+    private val subscriptionTopics = listOf("DAQ", "esp/devices")
+
     inner class LocalBinder : Binder() {
         fun getService(): MqttService = this@MqttService
     }
@@ -45,7 +45,7 @@ class MqttService : Service() {
 
         mqttAndroidClient.connect(mqttConnectOptions, null, object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken) {
-                subscribeToTopic()
+                subscribeToTopics()  // Subscribe to multiple topics
             }
 
             override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
@@ -74,18 +74,22 @@ class MqttService : Service() {
         })
     }
 
-    private fun subscribeToTopic() {
-        mqttAndroidClient.subscribe(subscriptionTopic, 0, null, object : IMqttActionListener {
-            override fun onSuccess(asyncActionToken: IMqttToken) {
-                Toast.makeText(this@MqttService, "Subscribed to $subscriptionTopic", Toast.LENGTH_SHORT).show()
-            }
+    // Subscribe to multiple topics
+    private fun subscribeToTopics() {
+        subscriptionTopics.forEach { topic ->
+            mqttAndroidClient.subscribe(topic, 0, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken) {
+                    Toast.makeText(this@MqttService, "Subscribed to $topic", Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                Toast.makeText(this@MqttService, "Subscription failed", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Toast.makeText(this@MqttService, "Subscription to $topic failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 
+    // Publish messages to a given topic
     fun publishMessage(topic: String, message: String) {
         if (mqttAndroidClient.isConnected) {
             try {

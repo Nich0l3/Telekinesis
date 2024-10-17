@@ -22,7 +22,7 @@ const char *ssid      = WIFI_SSID;
 const char *password  = WIFI_PASSWORD;    
 
 // MQTT Broker settings
-const char* mqtt_server = "192.168.146.179";
+const char* mqtt_server = "192.168.1.36";
 const int mqtt_port = 1883;
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
