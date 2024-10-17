@@ -100,7 +100,7 @@ create_user_conf() {
 }
 
 enable_ssh(){
-  if $ENABLE_SSH; then
+  if [ "$ENABLE_SSH" -ne 0 ]; then
     touch $BOOTFS/ssh
   fi
 }
