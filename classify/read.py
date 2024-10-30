@@ -21,13 +21,13 @@ freq_map = {
 # Extract the epochs for each frequency
 epochs = {}
 for label, freq in freq_map.items():
-    epochs[label] = mne.Epochs(raw, events, event_id={label: event_id[label]}, tmin=0, tmax=5, baseline=None)#event_id=int(label), tmin=0.0, tmax=5.0, baseline=None)
+    epochs[label] = mne.Epochs(raw, events, event_id, tmin=1.0, tmax=6.0, baseline=None)#event_id=int(label), tmin=0.0, tmax=5.0, baseline=None)
 
 import numpy as np
 import os
 
 # Create a directory to save the data files
-output_dir = r'C:\Users\BPIT\gdf\SSVEP-based-EEG-signal-processing-main\Data'
+output_dir = r'C:\Users\BPIT\gdf'
 os.makedirs(output_dir, exist_ok=True)
 
 def save_epochs_to_file(epochs, label, freq):
