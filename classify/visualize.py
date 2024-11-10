@@ -3,14 +3,14 @@ import numpy as np
 import os
 
 # Load the data
-output_dir = r'C:\Users\BPIT\gdf\SSVEP-based-EEG-signal-processing-main\Data'
+output_dir = r'C:\Users\qwerty\Desktop\Telekinesis\classify\data'
 
 # List of frequencies to plot
 frequencies = [13, 17, 21]
 
 # Font size settings
-title_fontsize = 10
-label_fontsize = 8
+title_fontsize = 8
+label_fontsize = 6
 tick_fontsize = 8
 
 # Set the number of epochs per plot

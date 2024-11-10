@@ -1,7 +1,5 @@
 import mne
-file_path = r'C:\Users\BPIT\gdf\SSVEP-based-EEG-signal-processing-main\Data\Subject2-[2012.04.07-19.27.02].gdf'
-
-
+file_path = r'C:\Users\qwerty\Desktop\SSVEP-based-EEG-signal-processing\Data\Subject2-[2012.04.07-19.27.02].gdf'
 # Load the GDF file
 raw = mne.io.read_raw_gdf(file_path, preload=True)
 
@@ -21,13 +19,12 @@ freq_map = {
 # Extract the epochs for each frequency
 epochs = {}
 for label, freq in freq_map.items():
-    epochs[label] = mne.Epochs(raw, events, event_id, tmin=1.0, tmax=6.0, baseline=None)#event_id=int(label), tmin=0.0, tmax=5.0, baseline=None)
-
+        epochs[label] = mne.Epochs(raw, events, event_id={label: event_id[label]}, tmin=1.0, tmax=6.0, baseline=None, preload=True)
 import numpy as np
 import os
 
 # Create a directory to save the data files
-output_dir = r'C:\Users\BPIT\gdf'
+output_dir = r'C:\Users\qwerty\Desktop\Telekinesis\classify\data'
 os.makedirs(output_dir, exist_ok=True)
 
 def save_epochs_to_file(epochs, label, freq):
@@ -35,6 +32,10 @@ def save_epochs_to_file(epochs, label, freq):
     file_path = os.path.join(output_dir, f'{freq}Hz_data.npy')
     np.save(file_path, data)
     print(f'Saved {freq} Hz data to {file_path}')
+
+print(epochs)
+with open("epochs.txt",'w') as file:  
+    file.write(str(epochs))
 
 # Save the data for each frequency
 for label, freq in freq_map.items():

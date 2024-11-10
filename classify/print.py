@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 # Path to the directory where .npy files are saved
-output_dir = r'C:\Users\BPIT\gdf\SSVEP-based-EEG-signal-processing-main\Data'
+output_dir = r'C:\Users\qwerty\Desktop\Telekinesis\classify\data'
 
 # Load and inspect the 13 Hz data
 file_path_13hz = os.path.join(output_dir, '13Hz_data.npy')

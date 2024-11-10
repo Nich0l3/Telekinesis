@@ -2,6 +2,7 @@ import joblib
 import numpy as np
 from scipy.signal import butter, lfilter, iirnotch
 from scipy.fftpack import fft
+import os 
 
 # Define filtering functions
 def butter_bandpass(lowcut, highcut, fs, order=3):
@@ -44,9 +45,9 @@ def fft_feature_extraction(data, fs, channels, subbands):
     return np.array(features)
 
 # Load data files
-# data_13hz = '13Hz_data.npy'
-# data_17hz = '17Hz_data.npy'
-# data_21hz = '21Hz_data.npy'
+data_13hz = 'data/13Hz_data.npy'
+data_17hz = 'data/17Hz_data.npy'
+data_21hz = 'data/21Hz_data.npy'
 
 # Load the scaler and SVM model
 scaler = joblib.load('scaler.pkl')
@@ -85,12 +86,10 @@ def process_and_predict(file_path, label):
     features_extraction = fft_feature_extraction(data_car, fs, num_channel, subbands)
 
     # Print extracted features
-    print("Extracted features for", label, "Hz:", features_extraction,end='\n\n')
+    print("Extracted features for", label, "Hz:", features_extraction)
 
     # Standardize features
     standardized_features = scaler.transform(features_extraction)
-    print("Scaler mean:", scaler.mean_)
-    print("Scaler scale:", scaler.scale_)
 
     # Print standardized features
     print("Standardized features for", label, "Hz:", standardized_features)
@@ -98,17 +97,18 @@ def process_and_predict(file_path, label):
     # Make predictions
     predictions = svm_model.predict(standardized_features)
 
-    print(f"Predictions for {label} Hz data:", predictions,end='\n\n')
-    return predictions
-###################################################################################
+    # Output predictions
+    print(f"Predictions for {label} Hz data:", predictions)
 
-import os 
+    return predictions
+
+###################################################################################
 
 # File paths
 file_paths = {
-    "13Hz": "13Hz_data.npy",
-    "17Hz": "13Hz_data.npy",
-    "21Hz": "13Hz_data.npy"
+    "13Hz": data_13hz,
+    "17Hz": data_17hz,
+    "21Hz": data_21hz
 }
 
 # Process and predict for each frequency data file
@@ -117,8 +117,3 @@ for label, file_path in file_paths.items():
         process_and_predict(file_path, label)
     else:
         print(f"File {file_path} not found.")
-
-
-# print("Predictions:", predictions_13hz)
-# print("Predictions:", predictions_17hz)
-# print("Predictions:", predictions_21hz)
