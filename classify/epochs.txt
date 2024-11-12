@@ -1,4 +1,0 @@
-{'33025': <Epochs | 10 events (all good), 1 – 6 s (baseline off), ~812 kB, data loaded,
- '33025': 10>, '33026': <Epochs | 10 events (all good), 1 – 6 s (baseline off), ~812 kB, data loaded,
- '33026': 10>, '33027': <Epochs | 10 events (all good), 1 – 6 s (baseline off), ~812 kB, data loaded,
- '33027': 10>}
