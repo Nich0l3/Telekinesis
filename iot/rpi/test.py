@@ -17,7 +17,7 @@ client.subscribe(topic)
 client.loop_start()
 
 try:
-    print("\nSubscriber is running. You can publish messages to the same topic.\n")
+    print("\Broker is running. You can now publish messages.\n")
     
     # Publish messages in a loop
     while True:
