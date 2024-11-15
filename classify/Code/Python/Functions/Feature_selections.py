@@ -67,7 +67,7 @@ def feature_selecions(data, labels, num_features, threshold_var=0.1, n_neighbors
     mod.fit(data)
     features = mod.transform(data)
   elif type_feature_selection.lower() == "anova":
-    pvalue = np.zeros(data.shape[1])
+    pvalue = np.zeros(data.shape[1])                      # number of channels
     for i in range(data.shape[1]):                        # Compute p-values for each feature using ANOVA
         pvalue[i] = f_oneway(data[:, i], labels)[1]
     ind = np.argsort(pvalue)                              # Sort p-values and get indices of sorted features 
