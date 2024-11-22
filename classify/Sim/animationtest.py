@@ -5,14 +5,16 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import paho.mqtt.client as mqtt
+import json
 
 # MQTT Broker details
-MQTT_BROKER = "192.168.9.179"  # Change this to your broker address
+MQTT_BROKER = "localhost"  # Change this to your broker address
 MQTT_PORT = 1883
 MQTT_TOPIC = "DAQ"
 
 # Create MQTT client instance
-client = mqtt.Client()
+client_id = 'sim'
+client = mqtt.Client(client_id)
 
 # Callback function to handle successful connection
 def on_connect(client, userdata, flags, rc):
@@ -21,7 +23,21 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback function to handle incoming messages
 def on_message(client, userdata, msg):
-    print(f"Received message: {msg.payload.decode()}")
+    try:
+        message = json.loads(msg.payload.decode())
+
+        frequency = message['frequency']
+        
+        eeg_data_list = message['eeg_data']
+        eeg_data = np.array(eeg_data_list)
+
+        print(f"Received EEG data for frequency {frequency}")
+        print(f"EEG data shape: {eeg_data.shape}")
+        print(f"EEG data shape: {eeg_data}")
+
+    except Exception as e:
+        print(f"Error processing message: {e}")
+
 
 # Connect to the MQTT broker
 def connect_mqtt():
@@ -34,11 +50,11 @@ def connect_mqtt():
 def load_data(frequency):
     try:
         if frequency == '13Hz':
-            return np.load(r'C:\Users\qwerty\Downloads\reza-updated\Sim\13hz.npy')
+            return np.load('Sim/13hz.npy')
         elif frequency == '17Hz':
-            return np.load(r'C:\Users\qwerty\Downloads\reza-updated\Sim\17hz.npy')
+            return np.load('Sim/17hz.npy')
         elif frequency == '21Hz':
-            return np.load(r'C:\Users\qwerty\Downloads\reza-updated\Sim\21hz.npy')
+            return np.load('Sim/21hz.npy')
         else:
             raise ValueError("Unknown frequency")
     except Exception as e:
@@ -61,27 +77,54 @@ def sent_mqtt(flag):
     except Exception as e:
         print(f"Failed to send MQTT message: {e}")
 
+
+# function to load eeg_data
+def send_eeg(eeg_data, frequency):    
+    try:
+        # Again load data if data is being send after normalization
+        # eeg_data = load_data(frequency)
+        print(eeg_data.shape)
+
+        if eeg_data is None:
+            return
+
+        # Convert the EEG data to a JSON-serializable format (list of lists)
+        eeg_data_list = eeg_data[:,:,:1].tolist()  # Convert the numpy array to a Python list
+
+        # Create a message payload with the frequency and EEG data
+        message = {
+            'frequency': frequency,
+            'eeg_data': eeg_data_list
+        }
+
+        # Convert the message to a JSON string
+        message_json = json.dumps(message)
+
+        # Publish data to the MQTT topic
+        client.publish(MQTT_TOPIC, message_json)
+        print(f"Sent EEG data for frequency {frequency} to MQTT broker")
+    except Exception as e:
+        print(f"Failed to send MQTT message: {e}")
+
+
+
 # Function to initialize and run the animation
 def start_animation(frequency):
     frequency_to_flag = {
-        '13Hz': 2,
+        '13Hz': 0,
         '17Hz': 1,
-        '21Hz': 0
+        '21Hz': 2
     }
+
+    eeg_data = load_data(frequency)
+
+    send_eeg(eeg_data, frequency)
 
     # Get the corresponding flag value based on the frequency
     flag = frequency_to_flag.get(frequency)
     if flag is None:
         messagebox.showerror("Error", "Invalid frequency")
         return
-
-    # Load the selected frequency data
-    eeg_data = load_data(frequency)
-
-    if eeg_data is None:
-        return
-
-    # Send the data through MQTT when the button is pressed
 
     # Get the dimensions of the data
     n_samples, n_channels, n_trials = eeg_data.shape
@@ -121,9 +164,10 @@ def start_animation(frequency):
 
     # Update function to animate the data
     def update(frame):
-        if frame >= n_samples - 5:
-            sent_mqtt(flag)  
-            return lines  # Stop if we've plotted all samples
+        # if frame >= n_samples - 5:
+            # sent_mqtt(flag)  
+            # send_eeg(frequency)
+            # return lines  # Stop if we've plotted all samples
 
         print(f"Updating frame {frame}")
 
@@ -169,6 +213,12 @@ def initialize_empty_plot():
     canvas.draw()
     canvas.get_tk_widget().pack()
 
+# Function to handle window close event
+def on_window_close():
+    print("Closing the application...")
+    client.loop_stop()  # Stop the MQTT client loop
+    root.quit()  # Close the Tkinter window
+
 # Create the main Tkinter window
 root = tk.Tk()
 root.title("EEG Signal Sim")
@@ -199,6 +249,9 @@ initialize_empty_plot()
 
 # Connect to MQTT broker
 connect_mqtt()
+
+# Handle window close event
+root.protocol("WM_DELETE_WINDOW", on_window_close)
 
 # Run the Tkinter event loop
 root.mainloop()

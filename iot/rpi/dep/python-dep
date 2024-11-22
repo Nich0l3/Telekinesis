@@ -1,2 +1,12 @@
 paho-mqtt<2.0.0
 Flask
+numpy
+matplotlib
+wheel
+mne
+tensorflow
+seaborn
+skfeature-chappers
+scipy
+joblib
+scikit-learn

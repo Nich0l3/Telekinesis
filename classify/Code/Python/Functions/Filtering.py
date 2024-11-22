@@ -52,6 +52,17 @@ def filtering(data, f_low, f_high, order, fs, notch_freq, quality_factor, filter
     End
     ==========================================================================================================
     """
+
+
+    """
+    self note :
+
+    (1280,60,480)
+
+    transposed : (480, 8 , 1280)
+    np array is being iterated over trials (480)
+
+    """
     # ---------------------------------------- Normalize frequency values ------------------------------------
     f_low = f_low / (fs / 2)
     f_high = f_high / (fs / 2)
@@ -59,6 +70,8 @@ def filtering(data, f_low, f_high, order, fs, notch_freq, quality_factor, filter
     filtered_data = data.copy()           # Make a copy of the input data
     # ----------------------------- Convert data to ndarray if it's not already ------------------------------
     filtered_data = np.array(filtered_data) if not isinstance(filtered_data, np.ndarray) else filtered_data
+
+    # print(f"the Filtered data from inside function\n {filtered_data.shape}",end="\n\n")
     # ------------------------- Transpose data if it has more rows than columns ------------------------------
     filtered_data = filtered_data.T if filtered_data.ndim > 1 and filtered_data.shape[0] > filtered_data.shape[-1]\
     else filtered_data
