@@ -65,18 +65,6 @@ def load_data(frequency):
 def on_animation_done():
     messagebox.showinfo("Animation Finished", "All frames of the animation have been completed!")
 
-# Function to send MQTT messages (send data corresponding to frequency)
-def sent_mqtt(flag):
-    try:
-        # For simplicity, sending only the first 100 samples of each channel as a JSON object
-        data_to_send = flag
-
-        # Publish data as a JSON string
-        client.publish(MQTT_TOPIC, data_to_send)
-
-    except Exception as e:
-        print(f"Failed to send MQTT message: {e}")
-
 
 # function to load eeg_data
 def send_eeg(eeg_data, frequency):    
@@ -164,11 +152,6 @@ def start_animation(frequency):
 
     # Update function to animate the data
     def update(frame):
-        # if frame >= n_samples - 5:
-            # sent_mqtt(flag)  
-            # send_eeg(frequency)
-            # return lines  # Stop if we've plotted all samples
-
         print(f"Updating frame {frame}")
 
         # Update the plot for each channel
