@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 import json
 
 # MQTT Broker details
-MQTT_BROKER = "localhost"  # Change this to your broker address
+MQTT_BROKER = "eeg.local"  # Change this to your broker address
 MQTT_PORT = 1883
 MQTT_TOPIC = "DAQ"
 
