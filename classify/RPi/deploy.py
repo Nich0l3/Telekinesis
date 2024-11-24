@@ -7,21 +7,6 @@ import joblib
 import time
 import json
 
-def count_values(arr):
-    """
-    Function to count occurrences of 0s, 1s, and 2s in a given array.
-    
-    Parameters:
-    arr (list): The input array containing numbers.
-    
-    Returns:
-    tuple: A tuple containing the count of 0s, 1s, and 2s in the array.
-    """
-    count_zeros = np.count_nonzero(arr == 0)
-    count_ones = np.count_nonzero(arr == 1)
-    count_twos = np.count_nonzero(arr == 2)
-        
-    return count_zeros, count_ones, count_twos
 
 #########################       PRE PROCESSING      ##########################
 order = 4
@@ -83,16 +68,25 @@ def normalize_inference(x_real_time, scaler_filename="normalize.joblib"):
     
     return x_real_time_normalized
 
-import paho.mqtt.client as mqtt
+def count_values(arr):
+    """
+    Function to count occurrences of 0s, 1s, and 2s in a given array.
+    
+    Parameters:
+    arr (list): The input array containing numbers.
+    
+    Returns:
+    tuple: A tuple containing the count of 0s, 1s, and 2s in the array.
+    """
+    count_zeros = np.count_nonzero(arr == 0)
+    count_ones = np.count_nonzero(arr == 1)
+    count_twos = np.count_nonzero(arr == 2)
+        
+    return count_zeros, count_ones, count_twos
 
 def send_mqtt_message(topic, payload):
     result = client.publish(topic, payload)
-    result.wait_for_publish()
   
-
-#send_mqtt_message(broker, topic, message)
-
-
 
 def send_result(norm_features):
     feature_output = saved_model.predict(norm_features)
@@ -102,7 +96,7 @@ def send_result(norm_features):
     print(f"Result : Zeros: {z1}, Ones: {o1}, Twos: {t1}")
     mapping = { 0 : "0", 1 : "1" , 2 : "2"}
     result  = mapping[ 0 if z1 > o1 and z1 > t1 else 1 if o1 > t1 else 2]
-    send_mqtt_message(topic="REST", message=result)
+    send_mqtt_message(topic="RES", payload=result)
 
 
 def on_message(client, userdata, msg):
@@ -123,11 +117,8 @@ def on_message(client, userdata, msg):
     except Exception as e:
         print(f"Error processing message: {e}")
 
-################################    CLASS           ############################
 
 
-
-########################    import files   #####################################
 # Load the pre-trained model and normalization pipeline
 saved_model = joblib.load("trained_model.pkl")  
 normalize = joblib.load("normalize.joblib") 
