@@ -1,27 +1,16 @@
+#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
 // Change dev ID for every new node
+#define                 esp1 // esp2
 #define DEVID           "esp2"
 #define WIFI_SSID       "Pixel"
 #define WIFI_PASSWORD   ""
 #define THR             -30
-
-#define ESP8266
-
-#ifdef ESP32
-#include <WiFi.h>
-#endif
-#ifdef ESP8266
-#include <ESP8266WiFi.h>
-#define LOW 1
-#define HIGH 0
-#endif
-
-
-// WiFi settings
-// const char* ssid = "Pixel";
-// const char* password = "";
+#define LOW              1
+#define HIGH             0
+#define TRIG             D6 
 
 // MQTT Broker settings
 const char* mqtt_server = "eeg.local";
@@ -39,11 +28,9 @@ void connectToWiFi();
 void connectToMQTTBroker();
 void publishConnectedDevices();
 void checkWiFiSignal();
-// void publishDeviceState(const char* state);
 void broadcastDisconnect();
 void mqttCallback(char* topic, byte* payload, unsigned int length);
-void set_tate(uint8_t pin, uint8_t state);
-void printFreeHeap();  // Function to print free heap memory
+void set_state(uint8_t pin, uint8_t state);
 
 // WiFi signal checking interval
 unsigned long lastSignalCheck = 0;
@@ -53,11 +40,10 @@ int sig_strength;
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(D6,OUTPUT);
-
+  pinMode(TRIG,OUTPUT);
 
   set_state(LED_BUILTIN,LOW);
-  set_state(D6,LOW);
+  set_state(TRIG,1);
 
   mqtt_client.setServer(mqtt_server, mqtt_port);
   mqtt_client.setCallback(mqttCallback);
@@ -69,13 +55,8 @@ void loop() {
   if (!mqtt_client.connected()) {
     connectToMQTTBroker();
   }
-  // unsigned long currentMillis = millis();
-  // if (currentMillis - lastSignalCheck >= signalCheckInterval) {
-  //   lastSignalCheck = currentMillis;
      checkWiFiSignal();
-  // }
   mqtt_client.loop();
-  //printFreeHeap();  // Print free heap memory
   delay(500);     // Adjust the delay as needed
 }
 
@@ -108,7 +89,6 @@ void connectToWiFi() {
 
 void subscribeToTopics() {
   mqtt_client.subscribe(mqtt_topic_0);
-  // mqtt_client.subscribe(mqtt_topic_1);
   mqtt_client.subscribe(device_topic);
 }
 
@@ -197,13 +177,11 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
   if (messageTemp == "0") {
     Serial.println("switched to LOW");
-    set_state(D6, LOW);
-
+    set_state(TRIG, 1);
   } else if (messageTemp == "1") {
     Serial.println("switched to HIGH");
-    set_state(D6, HIGH);
+    set_state(TRIG, 0);
   }
-  // }
   Serial.println();
   // checkWiFiSignal();
   Serial.println("-----------------------");
@@ -230,10 +208,5 @@ void publishConnectedDevices() {
 
   // Publish the JSON string to the MQTT topic
   mqtt_client.publish(device_topic, jsonBuffer);
-}
-
-void printFreeHeap() {
-  Serial.print("Free heap memory: ");
-  Serial.println(ESP.getFreeHeap());
 }
 
